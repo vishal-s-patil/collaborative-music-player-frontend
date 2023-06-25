@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const CreateRoom = () => {
+const CreateRoom = (props) => {
     const navigate = useNavigate();
+    const { update, votesToSkip, guestCanPause, roomCode, updateCallback } = props;
+
 
     const [formData, setFormData] = useState({
-        votes_to_skip: 2,
-        guest_can_pause: false,
+        votes_to_skip: votesToSkip,
+        guest_can_pause: guestCanPause,
     });
 
     const handleChange = (e, fieldName) => {
@@ -31,37 +33,35 @@ const CreateRoom = () => {
             })
     };
 
+    const handleUpdateRoom = (e) => {
+        e.preventDefault();
+
+        const requestOptions = {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...formData, 'code': roomCode }),
+        }
+
+        fetch('/api/update-room', requestOptions)
+            .then((response) => {
+                if (response.status === 200) {
+                    alert('Room updated successfully');
+                }
+                else {
+                    alert('Error updating room');
+                }
+                updateCallback();
+            })
+
+    };
+
     const handleBack = (e) => {
         navigate('/');
     };
 
-    return (
-        <div className="flex items-center justify-center h-screen">
-            <div className="text-center">
-                <h1 className="text-4xl font-bold mb-4">Create a Room</h1>
-                <h2 className="text-xl font-semibold mb-4">Guest Controls</h2>
-                <div className="mb-4 flex justify-center">
-                    <label>
-                        <input
-                            type="checkbox"
-                            name="guest_can_pause"
-                            checked={formData.guest_can_pause}
-                            onChange={(e) => { handleChange(e, 'guest_can_pause') }}
-                        />
-                        Subscribe to Newsletter
-                    </label>
-                </div>
-                <div className="mb-4">
-                    <label className="block">
-                        Votes required to skip the song:
-                        <input
-                            type="number"
-                            className="ml-2 border border-gray-300 px-2 py-1 rounded"
-                            value={formData.votes_to_skip}
-                            onChange={(e) => handleChange(e, 'votes_to_skip')}
-                        />
-                    </label>
-                </div>
+    const renderCreateButtons = () => {
+        return (
+            <>
                 <div className="space-x-4">
                     <button
                         className="bg-blue-500 text-white px-4 py-2 rounded"
@@ -76,9 +76,67 @@ const CreateRoom = () => {
                         Back
                     </button>
                 </div>
+            </>
+        )
+    }
+
+    const renderUpdateButtons = () => {
+        return (
+            <>
+                <div className="space-x-4">
+                    <button
+                        className="bg-blue-500 text-white px-4 py-2 rounded"
+                        onClick={handleUpdateRoom}
+                    >
+                        Update Room
+                    </button>
+                </div>
+            </>
+        )
+    }
+
+    return (
+        <>
+            <div className="flex items-center justify-center">
+                <div className="text-center">
+                    <h1 className="text-4xl font-bold mb-4">{update ? "Update Room" : "Create Room"}</h1>
+                    <h2 className="text-xl font-semibold mb-4">Guest Controls</h2>
+                    <div className="mb-4 flex justify-center">
+                        <label>
+                            <input
+                                className='mx-2'
+                                type="checkbox"
+                                name="guest_can_pause"
+                                checked={formData.guest_can_pause}
+                                onChange={(e) => { handleChange(e, 'guest_can_pause') }}
+                            />
+                            Play/Pause
+                        </label>
+                    </div>
+                    <div className="mb-4">
+                        <label className="block">
+                            Votes required to skip the song:
+                            <input
+                                type="number"
+                                className="ml-2 w-48 sm:w-32 md:w-24 lg:w-20 xl:w-16 border-0 border-b border-gray-500 focus:outline-none focus:border-blue-500"
+                                value={formData.votes_to_skip}
+                                onChange={(e) => handleChange(e, 'votes_to_skip')}
+                            />
+                        </label>
+                    </div>
+                    {update ? renderUpdateButtons() : renderCreateButtons()}
+                </div>
             </div>
-        </div>
+        </>
     )
+}
+
+CreateRoom.defaultProps = {
+    update: false,
+    roomCode: null,
+    votesToSkip: 2,
+    guestCanPause: false,
+    updateCallback: () => { },
 }
 
 export default CreateRoom
