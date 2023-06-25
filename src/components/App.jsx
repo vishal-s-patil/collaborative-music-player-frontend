@@ -1,10 +1,11 @@
 import HomePage from './HomePage';
+import { BrowserRouter } from 'react-router-dom'
 
 function App() {
   return (
-    <h1 className="">
-      <HomePage/>
-    </h1>
+    <BrowserRouter>
+      <HomePage />
+    </BrowserRouter>
   );
 }
 
