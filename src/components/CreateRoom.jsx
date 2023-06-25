@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Room from './Room';
 
 const CreateRoom = () => {
     const navigate = useNavigate();
@@ -26,7 +27,9 @@ const CreateRoom = () => {
 
         fetch('/api/create-room', requestOptions)
             .then((response) => response.json())
-            .then((data) => console.log(data))
+            .then((data) => {
+                navigate('/room/' + data.code)
+            })
     };
 
     const handleBack = (e) => {
