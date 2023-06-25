@@ -4,11 +4,14 @@ import CreateRoom from './CreateRoom'
 import JoinRoom from './JoinRoom'
 import Room from './Room'
 
+const Home = () => <h1>Home Page</h1>;
+
 const HomePage = () => {
   return (
     <div>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Home />}/>
           <Route path="/create" element={<CreateRoom />} />
           <Route path="/join" element={<JoinRoom />} />
           <Route path="/room/:code" element={<Room />} />

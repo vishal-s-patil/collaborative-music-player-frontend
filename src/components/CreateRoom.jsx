@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Room from './Room';
 
 const CreateRoom = () => {
     const navigate = useNavigate();
@@ -33,7 +32,7 @@ const CreateRoom = () => {
     };
 
     const handleBack = (e) => {
-        navigate('/join');
+        navigate('/');
     };
 
     return (
