@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom';
 import CreateRoom from './CreateRoom';
+import MusicPlayer from './MusicPlayer';
 
 const Room = () => {
     const { code } = useParams();
     const navigate = useNavigate();
     const [showSettings, setShowSettings] = useState(false);
     const [spotifyAuthenticated, setSpotifyAuthenticated] = useState(false);
-    // const [authURL, setAuthURL] = useState('');
+    const [song, setSong] = useState({});
 
     const [data, setData] = useState({
         votes_to_skip: 2,
@@ -47,12 +48,12 @@ const Room = () => {
             .then((response) => response.json())
             .then((jsonResponse) => {
                 setSpotifyAuthenticated(jsonResponse.status);
-                if(!jsonResponse.status) {
+                if (!jsonResponse.status) {
                     fetch('/spotify/get-auth-url')
-                    .then((response) => response.json())
-                    .then((jsonResponse) => {
-                        window.location.replace(jsonResponse.url);
-                    })
+                        .then((response) => response.json())
+                        .then((jsonResponse) => {
+                            window.location.replace(jsonResponse.url);
+                        })
                 }
             })
     }
@@ -91,8 +92,25 @@ const Room = () => {
         )
     }
 
-    useEffect(() => {
+    const getCurrentSong = () => {
+        fetch('/spotify/current-song')
+            .then((response) => {
+                if (!response.ok) {
+                    return {};
+                }
+                else {
+                    return response.json();
+                }
+            })
+            .then(jsonData => {
+                console.log(jsonData);
+                setSong(jsonData);
+            })
+    }
+
+    useEffect(() => {   
         getData();
+        const interval = setInterval(getCurrentSong, 1000);
     }, []);
 
     if (showSettings) {
@@ -104,6 +122,7 @@ const Room = () => {
             <p className="text-2xl">Votes: {data.votes_to_skip}</p>
             <p className="text-2xl">Guest Can Pause: {data.guest_can_pause ? 'Yes' : 'No'}</p>
             <p className="text-2xl">Host: {data.is_host ? 'Yes' : 'No'}</p>
+            <MusicPlayer{...song} />
             {data.is_host ? renderSettingsButton() : null}
             <button
                 className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mt-4 rounded"
