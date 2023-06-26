@@ -22,7 +22,7 @@ const CreateRoom = (props) => {
 
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', credentials: 'include', },
             body: JSON.stringify(formData),
         }
 
@@ -38,7 +38,7 @@ const CreateRoom = (props) => {
 
         const requestOptions = {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', credentials: 'include', },
             body: JSON.stringify({ ...formData, 'code': roomCode }),
         }
 

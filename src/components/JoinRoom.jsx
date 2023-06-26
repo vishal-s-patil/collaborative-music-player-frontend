@@ -16,7 +16,7 @@ const JoinRoom = () => {
 
     const requestOptions = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', credentials: 'include', },
       body: JSON.stringify({
         "code": roomCode
       }),

@@ -6,6 +6,8 @@ const Room = () => {
     const { code } = useParams();
     const navigate = useNavigate();
     const [showSettings, setShowSettings] = useState(false);
+    const [spotifyAuthenticated, setSpotifyAuthenticated] = useState(false);
+    // const [authURL, setAuthURL] = useState('');
 
     const [data, setData] = useState({
         votes_to_skip: 2,
@@ -16,7 +18,7 @@ const Room = () => {
     const handleLeaveRoom = () => {
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json', credentials: 'include', }
         }
 
         fetch('/api/leave-room', requestOptions)
@@ -34,6 +36,24 @@ const Room = () => {
                     guest_can_pause: jsonResponse.guest_can_pause,
                     is_host: jsonResponse.is_host
                 })
+                if (jsonResponse.is_host) {
+                    authenticateSpotify();
+                }
+            })
+    }
+
+    const authenticateSpotify = () => {
+        fetch('/spotify/is-authenticated')
+            .then((response) => response.json())
+            .then((jsonResponse) => {
+                setSpotifyAuthenticated(jsonResponse.status);
+                if(!jsonResponse.status) {
+                    fetch('/spotify/get-auth-url')
+                    .then((response) => response.json())
+                    .then((jsonResponse) => {
+                        window.location.replace(jsonResponse.url);
+                    })
+                }
             })
     }
 

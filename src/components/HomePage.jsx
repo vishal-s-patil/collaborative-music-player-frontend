@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import CreateRoom from './CreateRoom'
 import JoinRoom from './JoinRoom'
@@ -17,6 +17,18 @@ const Home = () => {
   const handleCreateRoom = () => {
     navigate('/create');
   };
+
+  const isUserInRoom = () => {
+    fetch("/api/user-in-room")
+      .then((response) => response.json())
+      .then((data) => {
+        data.code && navigate(`room/${data.code}`)
+      });
+  }
+
+  useEffect(() => {
+    isUserInRoom();
+  }, []);
 
   return (
     <div className="flex flex-col items-center">
@@ -41,12 +53,14 @@ const Home = () => {
 
 const HomePage = () => {
   const navigate = useNavigate();
+  // const [roomCode, setRoomCode] = useState(null);
 
   const isUserInRoom = () => {
     fetch("/api/user-in-room")
       .then((response) => response.json())
       .then((data) => {
         data.code && navigate(`room/${data.code}`)
+        // setRoomCode(data.code)
       });
   }
 
@@ -57,7 +71,7 @@ const HomePage = () => {
   return (
     <div>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route exact path="/" element={<Home />} />
         <Route path="/create" element={<CreateRoom />} />
         <Route path="/join" element={<JoinRoom />} />
         <Route path="/room/:code" element={<Room />} />
