@@ -5,12 +5,22 @@ const MusicPlayer = (props) => {
 
     let progress = Math.floor((time / duration) * 100);
 
-    const onPlay = () => {
-        console.log('onPlay');
+    const pauseSong = () => {
+        console.log('Paused');
+        const requestOptions = {
+            method : 'PUT',
+            headers: {'content-type': 'application/json', credentials: 'include'}
+        };
+        fetch("/spotify/pause", requestOptions)
     }
 
-    const onNext = () => {
-        console.log('onNext');
+    const playSong = () => {
+        console.log('playSong');
+        const requestOptions = {
+            method : 'PUT',
+            headers: {'content-type': 'application/json', credentials: 'include'}
+        };
+        fetch("/spotify/play", requestOptions)
     }
 
     return (
@@ -23,7 +33,7 @@ const MusicPlayer = (props) => {
                 </h3>
             </div>
             <div className="flex space-x-4">
-                <button className="p-2 bg-blue-500 rounded-full text-white">Play/Pause</button>
+                <button className="p-2 bg-blue-500 rounded-full text-white" onClick={() => {is_playing ? pauseSong() : playSong() }}>Play/Pause</button>
                 <button className="p-2 bg-blue-500 rounded-full text-white">Next</button>
             </div>
             <div className="w-full h-4 bg-gray-300 rounded-full mt-4">

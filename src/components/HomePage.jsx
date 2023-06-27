@@ -53,14 +53,12 @@ const Home = () => {
 
 const HomePage = () => {
   const navigate = useNavigate();
-  // const [roomCode, setRoomCode] = useState(null);
 
   const isUserInRoom = () => {
     fetch("/api/user-in-room")
       .then((response) => response.json())
       .then((data) => {
         data.code && navigate(`room/${data.code}`)
-        // setRoomCode(data.code)
       });
   }
 
